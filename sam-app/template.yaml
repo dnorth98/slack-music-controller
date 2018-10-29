@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    slack-music-controller
+    SAM Template the Slack Google Play music controller
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+    Function:
+        Timeout: 3
+
+Parameters:
+    SLACK_TOKEN:
+        Description: Slack token that for the bot
+        Type: String
+
+
+Resources:
+    DJCommandsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        FifoQueue: true
+
+    HeyDJFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: heydj/build/
+            Handler: app.lambda_handler
+            Runtime: python3.6
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    SLACK_TOKEN: !Ref SLACK_TOKEN
+                    QUEUE_NAME:
+                      Fn::GetAtt:
+                        - "DJCommandsQueue"
+                        - "QueueName"
+            Events:
+                HelloWorld:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /heydj
+                        Method: post
+
+    ControllerFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: controller/build/
+            Handler: app.lambda_handler
+            Runtime: python3.6
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    SLACK_TOKEN: !Ref SLACK_TOKEN
+                    QUEUE_NAME:
+                      Fn::GetAtt:
+                        - "DJCommandsQueue"
+                        - "QueueName"
+            Events:
+                HelloWorld:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /controller
+                        Method: get
+
+Outputs:
+
+    HeyDJApi:
+      Description: "API Gateway endpoint URL for Prod stage for HeyDJ function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/heydj/"
+
+
+    HeyDJFunction:
+      Description: "Hello World Lambda Function ARN"
+      Value: !GetAtt HeyDJFunction.Arn
+
+    HeyDJFunctionFunctionIamRole:
+      Description: "Implicit IAM Role created for Hey DJ function"
+      Value: !GetAtt HeyDJFunctionRole.Arn
+
+    ControllerApi:
+      Description: "API Gateway endpoint URL for Prod stage for Controller function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/controller/"
+
+    ControllerFunction:
+      Description: "Controller Lambda Function ARN"
+      Value: !GetAtt ControllerFunction.Arn
+
+    ControllerFunctionFunctionIamRole:
+      Description: "Implicit IAM Role created for HController function"
+      Value: !GetAtt ControllerFunctionRole.Arn
