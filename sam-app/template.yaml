@@ -10,12 +10,12 @@ Globals:
         Timeout: 3
 
 Parameters:
-    SLACK_TOKEN:
-        Description: Slack token that for the bot
+    SlackToken:
+        Description: Slack token that is passed by the bot
         Type: String
         Default: "123"
-    CONTROLLER_TOKEN:
-        Description: Simple token used to pass to the controller to get the commands
+    ControllerToken:
+        Description: Auth token used to pass to the controller to get the commands
         Type: String
         Default: "123"
 
@@ -32,15 +32,17 @@ Resources:
             CodeUri: heydj/build/
             Handler: app.lambda_handler
             Runtime: python3.6
+            Policies:
+              - "AmazonSQSFullAccess"
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
-                    SLACK_TOKEN: !Ref SLACK_TOKEN
+                    SLACK_TOKEN: !Ref SlackToken
                     QUEUE_NAME:
                       Fn::GetAtt:
                         - "DJCommandsQueue"
                         - "QueueName"
             Events:
-                HelloWorld:
+                heydj:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
                     Properties:
                         Path: /heydj
@@ -52,15 +54,17 @@ Resources:
             CodeUri: controller/build/
             Handler: app.lambda_handler
             Runtime: python3.6
+            Policies:
+              - "AmazonSQSFullAccess"
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
-                    CONTROLLER_TOKEN: !Ref CONTROLLER_TOKEN
+                    CONTROLLER_TOKEN: !Ref ControllerToken
                     QUEUE_NAME:
                       Fn::GetAtt:
                         - "DJCommandsQueue"
                         - "QueueName"
             Events:
-                HelloWorld:
+                controller:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
                     Properties:
                         Path: /controller
@@ -71,7 +75,6 @@ Outputs:
     HeyDJApi:
       Description: "API Gateway endpoint URL for Prod stage for HeyDJ function"
       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/heydj/"
-
 
     HeyDJFunction:
       Description: "Hello World Lambda Function ARN"

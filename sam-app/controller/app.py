@@ -21,7 +21,7 @@ def get_commands_from_queue():
             queue = sqs.get_queue_by_name(QueueName=sqs_queue_name)
         except ClientError as ex:
             if ex.response['Error']['Code'] == 'AWS.SimpleQueueService.NonExistentQueue':
-                print("ERROR: SQS queue " + sqs_queue + " was not found")
+                print("ERROR: SQS queue " + sqs_queue_name + " was not found")
 
         if queue:
             # get the commands from the queue. Each message has a body that always
