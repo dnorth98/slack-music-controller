@@ -11,14 +11,18 @@ prefix=" > ~/.pydistutils.cfg
 pushd heydj
 mkdir -p build
 cp *.py build
-pip install -r requirements.txt -t ./build
+if [ -e "requirements.txt" ]; then
+  pip install -r requirements.txt -t ./build
+fi
 popd
 
 # Controller function
 pushd controller
 mkdir -p build
 cp *.py build
-pip install -r requirements.txt -t ./build
+if [ -e "requirements.txt" ]; then
+  pip install -r requirements.txt -t ./build
+fi
 popd
 
 

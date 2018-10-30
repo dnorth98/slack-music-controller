@@ -13,13 +13,18 @@ Parameters:
     SLACK_TOKEN:
         Description: Slack token that for the bot
         Type: String
-
+        Default: "123"
+    CONTROLLER_TOKEN:
+        Description: Simple token used to pass to the controller to get the commands
+        Type: String
+        Default: "123"
 
 Resources:
     DJCommandsQueue:
       Type: AWS::SQS::Queue
       Properties:
         FifoQueue: true
+        ContentBasedDeduplication: true
 
     HeyDJFunction:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -49,7 +54,7 @@ Resources:
             Runtime: python3.6
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
-                    SLACK_TOKEN: !Ref SLACK_TOKEN
+                    CONTROLLER_TOKEN: !Ref CONTROLLER_TOKEN
                     QUEUE_NAME:
                       Fn::GetAtt:
                         - "DJCommandsQueue"
