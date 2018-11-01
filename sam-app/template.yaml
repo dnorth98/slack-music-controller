@@ -73,25 +73,9 @@ Resources:
 Outputs:
 
     HeyDJApi:
-      Description: "API Gateway endpoint URL for Prod stage for HeyDJ function"
+      Description: "API Gateway endpoint URL for HeyDJ Slack webhook"
       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/heydj/"
 
-    HeyDJFunction:
-      Description: "Hello World Lambda Function ARN"
-      Value: !GetAtt HeyDJFunction.Arn
-
-    HeyDJFunctionFunctionIamRole:
-      Description: "Implicit IAM Role created for Hey DJ function"
-      Value: !GetAtt HeyDJFunctionRole.Arn
-
     ControllerApi:
-      Description: "API Gateway endpoint URL for Prod stage for Controller function"
+      Description: "API Gateway endpoint URL for Musezack controller to poll"
       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/controller/"
-
-    ControllerFunction:
-      Description: "Controller Lambda Function ARN"
-      Value: !GetAtt ControllerFunction.Arn
-
-    ControllerFunctionFunctionIamRole:
-      Description: "Implicit IAM Role created for HController function"
-      Value: !GetAtt ControllerFunctionRole.Arn

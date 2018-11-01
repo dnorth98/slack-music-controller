@@ -15,4 +15,6 @@ sam deploy \
     --capabilities CAPABILITY_IAM \
     --region us-east-1
 
+aws cloudformation describe-stacks --stack-name slack-music-controller --query 'Stacks[].Outputs'
+
 popd
