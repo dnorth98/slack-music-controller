@@ -2,7 +2,7 @@
 This is a slack "bot" and controller endpoint to pair with the [musezack-dj](https://github.com/miketypeguy/musezack-dj) project for controlling google play music from Slack.  It is implemented using the [AWS SAM framework](https://github.com/awslabs/serverless-application-model) for deployment on AWS.
 
 # Overall Architecture
-![Architecture](https://raw.githubusercontent.com/dnorth98/slack-music-controller/master/images/arch.jpg)
+![Architecture](https://raw.githubusercontent.com/dnorth98/slack-music-controller/master/images/arch.png)
 
 # Setup
 
