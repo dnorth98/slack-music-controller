@@ -4,6 +4,7 @@ from botocore.exceptions import ClientError
 import os
 from urllib.parse import parse_qs
 import base64
+import time
 
 def post_command_to_queue(command, arg, user):
     print("Posting command to queue")
@@ -26,9 +27,12 @@ def post_command_to_queue(command, arg, user):
                 status = False
 
         if queue:
+            current_milli_time = int(round(time.time() * 1000))
+
             message_json = {
                 "command" : command,
                 "user" : user,
+                "ts": current_milli_time
             }
 
             if arg:
